@@ -1,5 +1,8 @@
 package com.kcs.first.example;
 
+import com.kcs.first.example.database.StudentsQuerys;
+import com.kcs.utils.JdbcUtils;
+
 import java.sql.*;
 
 /**
@@ -14,7 +17,12 @@ public class MyFirstConnectionExample {
 
             if (connection != null){
                 System.out.println("CONNECTED!!!!");
-                getStudents(connection);
+                StudentsQuerys studentsQuerys = new StudentsQuerys(connection);
+                studentsQuerys.getStudents();
+                System.out.println("is table exist >> " + JdbcUtils.isTableExist(connection, "students"));
+                studentsQuerys.updateStudentName(3, "Jokubas");
+
+                System.out.println("is student exist >> " + studentsQuerys.isStudentExist("Andrius", "Baltrunas"));
             }
         } catch (SQLException e) {
             System.out.println("Connection to db fail " + e);
@@ -22,19 +30,5 @@ public class MyFirstConnectionExample {
 
     }
 
-    private static void getStudents(Connection connection){
-        try {
-            Statement st = connection.createStatement();
-            ResultSet resultSet = st.executeQuery("SELECT * FROM students");
-            while (resultSet.next()){
-                System.out.println("id >> " + resultSet.getInt(1)//stupelio indeksas
-                        + " userName >> " + resultSet.getString("name") // stulpelio vardas
-                        + " surname >> " + resultSet.getString("surname")
-                        + " phone >> " + resultSet.getString(4)
-                        + " email >> " + resultSet.getString("email"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
 }
